@@ -4,6 +4,8 @@ from serial import Serial
 from time import sleep
 from sys import argv
 
+total_steps = 0
+
 ON = [1]
 OFF = [0]
 
@@ -30,18 +32,20 @@ def down(arduino):
 
 def left(arduino):
   step(arduino, 1, 254)
-  sleep(5)
+  sleep(1)
 
 def right(arduino):
   step(arduino, 1, 0)
-  sleep(5)
+  global total_steps 
+  total_steps += 1
+  sleep(1)
 
 def pen_up(arduino):
   step(arduino, 2, 0)
   sleep(1)
 
 def pen_down(arduino):
-  step(arduino, 2, 45)
+  step(arduino, 2, 40)
   sleep(1)
 
 
@@ -49,52 +53,19 @@ def next_letter(arduino):
   right(arduino)
   pen_down(arduino)
 
-def draw_a(arduino):
-  commands = [ 
-    pen_down, pen_up, right, pen_down, right, right, pen_up
-  ]
-  up(arduino)
-  up(arduino)
-  right(arduino)
-  down(arduino)
-  left(arduino)
-  right(arduino)
-  down(arduino)
-
-  pen_up(arduino)
-  next_letter(arduino)
-
-def draw_f(arduino):
-  up(arduino)
-  right(arduino)
-  left(arduino)
-  up(arduino)
-  right(arduino)
-
-  pen_up(arduino)
-  down(arduino)
-  down(arduino)
-  next_letter(arduino)
-
-def draw_h(arduino):
-  up(arduino)
-  up(arduino)
-  down(arduino)
-  right(arduino)
-  up(arduino)
-  down(arduino)
-  down(arduino)
-
-  pen_up(arduino)
-  next_letter(arduino)
-
-
-def draw_letter(arduino, letter):
-  {
-    'a': draw_a(arduino),
-  }[letter](arduino)
+f = [ pen_down, pen_up, right, pen_down, pen_up, right, pen_down, right, pen_up, right, pen_down, pen_up, right ]
+h = [ pen_down, pen_up, right, pen_down, pen_up, right, pen_down, pen_up, right, pen_down, pen_up, right ]
+a = [ pen_down, pen_up, right, pen_down, right, pen_up, right ]
+c = [ pen_down, right, pen_up, right, pen_down, pen_up, right, pen_down, right, pen_up, right, pen_down, pen_up, right ]
+k = [ pen_down, right, pen_up, right, pen_down, pen_up, right, pen_down, right, pen_up, right ]
+t = [ pen_down, right, pen_up, right ]
+o = [ pen_down, right, pen_up, right, pen_down, right, pen_up, right, pen_down, right, pen_up, right ]
+r = [ pen_down, pen_up, right, pen_down, right, pen_up, right, pen_down, pen_up, right ]
+y = [ pen_down, right, pen_up, right, pen_down, pen_up, right, pen_down, right, pen_up, right, pen_down, right, pen_up, right ]
 
 arduino = connect()
+
+pen_up(arduino)
 for arg in argv[1:]:
   { 
       'up': up, 
@@ -105,5 +76,10 @@ for arg in argv[1:]:
       'pen_down': pen_down,
   }[arg](arduino)
 
-# draw_f(arduino)
-#draw_h(arduino)
+pen_up(arduino)
+# [ left(arduino) for i in range(0, 32) ]
+
+for l in [f, h, a, c, k, t, o, r, y]:
+  for cmd in l:
+    cmd(arduino)
+

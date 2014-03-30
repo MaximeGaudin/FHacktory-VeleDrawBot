@@ -22,7 +22,7 @@ void loop() {
   if (Serial.available() >= 2) {
       int stepperId = Serial.read();
       int steps = Serial.read() - 128;
-      steps *= 5;
+      steps *= 2;
       
       Serial.print("Motor :");
       Serial.println(stepperId, DEC);
@@ -35,7 +35,7 @@ void loop() {
       } else if(stepperId == 1) {
         stepper02.step(steps);
       } else if(stepperId == 2) {
-        pen.write((steps / 5) + 128);    
+        pen.write((steps / 2) + 128);    
       }        
   }
 }
